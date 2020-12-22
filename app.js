@@ -6,7 +6,6 @@ const server = http.createServer((req,res) => {
 
     let url = req.url;
     let method = req.method
-    res.setHeader('Content-Type', 'text/html');
     if(req.url === '/'){
         res.write(`<html><head><title>Priyanshi</title></head>
         <body><form action = '/message' method = 'POST'>
@@ -24,18 +23,30 @@ const server = http.createServer((req,res) => {
             body.push(chunk);
             console.log(chunk)
         })
-        req.on("end", () => {
+        return req.on("end", () => {
+            // buffer is used to convert the chunks recieved into readable form.
             const parsedBody = Buffer.concat(body).toString();
             const message = parsedBody.split('&')[1]
-            fs.writeFileSync('message.txt', message);
+            // fs.writeFileSync('message.txt', message);
+            //writeFileSync() blocks the further code execution unless 
+            //the file operation finishes. Therefore, we use writeFile() and 
+            // pass the callback() to it.
+
+            fs.writeFile('message.txt', message, err => {
+                res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end()
+            })
+
 
         })
-        fs.writeFileSync('message.txt', 'DUMMY data');
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end()
+        // fs.writeFileSync('message.txt', 'DUMMY data');
+        
     }
+    res.setHeader('Content-Type', 'text/html');
+
     res.write('<html><head><title>Priyanshi</title></head></html>')
+    res.end()
     // res.write()
     // process.exit()  
     /* we never use process.exit() 
