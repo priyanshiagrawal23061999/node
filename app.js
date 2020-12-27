@@ -3,6 +3,7 @@ const routes = require('./routes');
 
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
+
 const bodyParser = require('body-parser')
 const express = require('express');
 const app = express()
@@ -12,7 +13,7 @@ app.use(bodyParser.urlencoded()) // it registers a middleware
 //console.log(routes.someText)
 //  statement for 2nd method of export
 
-app.use(adminRoutes);
+app.use('/admin', adminRoutes); // this will allow only admin routes
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
